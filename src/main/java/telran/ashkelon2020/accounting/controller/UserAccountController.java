@@ -1,5 +1,7 @@
 package telran.ashkelon2020.accounting.controller;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,8 +35,8 @@ public class UserAccountController {
 	}
 
 	@PostMapping("/login")
-	public UserAccountResponseDto login(String user) {
-		return accountService.getUser(user);
+	public UserAccountResponseDto login(Principal principal) {
+		return accountService.getUser(principal.getName());
 	}
 
 	@PutMapping("/user/{login}")
@@ -58,8 +60,8 @@ public class UserAccountController {
 	}
 
 	@PutMapping("/user/password")
-	public void changePassword(@RequestHeader("X-Password") String newPassword, String user) {
-		accountService.changePassword(user, newPassword);
+	public void changePassword(@RequestHeader("X-Password") String newPassword, Principal principal) {
+		accountService.changePassword(principal.getName(), newPassword);
 	}
 
 

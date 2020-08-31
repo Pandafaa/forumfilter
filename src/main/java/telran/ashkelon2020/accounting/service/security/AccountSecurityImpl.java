@@ -2,6 +2,8 @@ package telran.ashkelon2020.accounting.service.security;
 
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import telran.ashkelon2020.accounting.model.UserAccount;
 
 @Service
 public class AccountSecurityImpl implements AccountSecurity {
+	
+	Map<String, String> users = new ConcurrentHashMap<>();
 
 	@Autowired
 	UserAccountRepository repository;
@@ -65,6 +69,21 @@ public class AccountSecurityImpl implements AccountSecurity {
 		UserAccount userAccount = repository.findById(login)
 				.orElseThrow(() -> new UserNotFoundException(login));
 		return userAccount.getRoles().isEmpty();
+	}
+
+	@Override
+	public String addUser(String sessionId, String login) {
+		return users.put(sessionId, login) ;
+	}
+
+	@Override
+	public String getUser(String sessionId) {
+		return users.get(sessionId);
+	}
+
+	@Override
+	public String removeUser(String sessionId) {
+		return users.remove(sessionId);
 	}
 
 }
