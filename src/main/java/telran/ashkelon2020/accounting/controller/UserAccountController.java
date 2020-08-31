@@ -33,36 +33,32 @@ public class UserAccountController {
 	}
 
 	@PostMapping("/login")
-	public UserAccountResponseDto login(@RequestHeader("Authorization") String token, String user) {
+	public UserAccountResponseDto login(String user) {
 		return accountService.getUser(user);
 	}
 
 	@PutMapping("/user/{login}")
-	public UserAccountResponseDto updateUser(@PathVariable String login,
-			 @RequestHeader("Authorization") String token, @RequestBody UserUpdateDto userUpdateDto) {
+	public UserAccountResponseDto updateUser(@PathVariable String login, @RequestBody UserUpdateDto userUpdateDto) {
 		return accountService.editUser(login, userUpdateDto);
 	}
 
 	@DeleteMapping("/user/{login}")
-	public UserAccountResponseDto removeUser(@PathVariable String login, @RequestHeader("Authorization") String token) {
+	public UserAccountResponseDto removeUser(@PathVariable String login) {
 		return accountService.removeUser(login);
 	}
 
-	@PutMapping("user/{login}/role/{role}")
-	public RolesResponseDto addRole(@PathVariable String login, @PathVariable String role, 
-			@RequestHeader("Authorization") String token) {
+	@PutMapping("/user/{login}/role/{role}")
+	public RolesResponseDto addRole(@PathVariable String login, @PathVariable String role) {
 		return accountService.changeRolesList(login, role, true);
 	}
 
-	@DeleteMapping("user/{login}/role/{role}")
-	public RolesResponseDto removeRole(@PathVariable String login, @PathVariable String role, 
-			@RequestHeader("Authorization") String token) {
+	@DeleteMapping("/user/{login}/role/{role}")
+	public RolesResponseDto removeRole(@PathVariable String login, @PathVariable String role) {
 		return accountService.changeRolesList(login, role, false);
 	}
 
 	@PutMapping("/user/password")
-	public void changePassword(@RequestHeader("Authorization") String token,
-			@RequestHeader("X-Password") String newPassword, String user) {
+	public void changePassword(@RequestHeader("X-Password") String newPassword, String user) {
 		accountService.changePassword(user, newPassword);
 	}
 

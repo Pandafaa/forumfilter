@@ -1,4 +1,4 @@
-package telran.ashkelon2020.accounting.service.security;
+package telran.ashkelon2020.accounting.service.filters;
 
 import java.io.IOException;
 
@@ -10,10 +10,18 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import telran.ashkelon2020.accounting.dto.exceptions.UnauthorizedException;
+import telran.ashkelon2020.accounting.dto.exceptions.UserNotFoundException;
+import telran.ashkelon2020.accounting.service.security.AccountSecurity;
 
 @Service
 public class AuthenticationFilter implements Filter{
+	
+	@Autowired
+	AccountSecurity securityService;
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -27,7 +35,18 @@ public class AuthenticationFilter implements Filter{
 		System.out.println(method);
 		System.out.println(token);
 		if (!"/account/register".equalsIgnoreCase(path)) {
-			//TODO
+			try {
+				String login = securityService.getLogin(token);
+			} catch (UserNotFoundException e) {
+				response.sendError(404, e.getMessage());
+				return;
+			} catch (UnauthorizedException e) {
+				response.sendError(401);
+				return;
+			}catch (Exception e) {
+				response.sendError(400);
+				return;
+			}
 		}
 		
 		chain.doFilter(request, response);

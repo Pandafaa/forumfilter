@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import telran.ashkelon2020.accounting.dao.UserAccountRepository;
 import telran.ashkelon2020.accounting.dto.UserLoginDto;
 import telran.ashkelon2020.accounting.dto.exceptions.ForbiddenException;
+import telran.ashkelon2020.accounting.dto.exceptions.TokenValidateException;
 import telran.ashkelon2020.accounting.dto.exceptions.UnauthorizedException;
 import telran.ashkelon2020.accounting.dto.exceptions.UserNotFoundException;
 import telran.ashkelon2020.accounting.model.UserAccount;
@@ -28,9 +29,6 @@ public class AccountSecurityImpl implements AccountSecurity {
 		if (!BCrypt.checkpw(userLoginDto.getPassword(), userAccount.getPassword())) {
 			throw new UnauthorizedException();
 		}	
-		if (userAccount.getRoles().isEmpty()) {
-			throw new ForbiddenException();
-		}
 		return userAccount.getLogin();
 	}
 
@@ -51,7 +49,7 @@ public class AccountSecurityImpl implements AccountSecurity {
 			credentials = credential.split(":");
 			return new UserLoginDto(credentials[0], credentials[1]);
 		} catch (Exception e) {
-			throw new UnauthorizedException();
+			throw new TokenValidateException();
 		}
 	}
 
@@ -60,6 +58,13 @@ public class AccountSecurityImpl implements AccountSecurity {
 		UserAccount userAccount = repository.findById(login)
 				.orElseThrow(() -> new UserNotFoundException(login));
 		return userAccount.getRoles().contains(role);
+	}
+	
+	@Override
+	public boolean isBanned(String login) {
+		UserAccount userAccount = repository.findById(login)
+				.orElseThrow(() -> new UserNotFoundException(login));
+		return userAccount.getRoles().isEmpty();
 	}
 
 }
