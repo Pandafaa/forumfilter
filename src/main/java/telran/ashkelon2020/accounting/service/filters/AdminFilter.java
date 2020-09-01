@@ -14,14 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
-import telran.ashkelon2020.accounting.dto.exceptions.ForbiddenException;
-import telran.ashkelon2020.accounting.dto.exceptions.UserNotFoundException;
 import telran.ashkelon2020.accounting.service.security.AccountSecurity;
 
 @Service
-@Order(20)
-public class ExpDateFilter implements Filter {
-
+@Order(40)
+public class AdminFilter implements Filter {
+	
 	@Autowired
 	AccountSecurity securityService;
 
@@ -31,29 +29,20 @@ public class ExpDateFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		String path = request.getServletPath();
-		String method = request.getMethod();
-		if (checkPathAndMethod(path, method)) {
-			try {
-				securityService.checkExpDate(request.getUserPrincipal().getName());
-				boolean res = securityService.isBanned(request.getUserPrincipal().getName());
-				if (res) {
-					response.sendError(403, "user banned");
-					return;
-				}
-			} catch (ForbiddenException e) {
+		if (checkPathAndMethod(path)) {
+			String user = request.getUserPrincipal().getName();
+			boolean res = securityService.checkHaveRole(user, "Administrator");
+			if (!res) {
 				response.sendError(403);
-				return;
-			} catch (UserNotFoundException e) {
-				response.sendError(404);
 				return;
 			}
 		}
 		chain.doFilter(request, response);
-	}
 
-	private boolean checkPathAndMethod(String path, String method) {
-		boolean res = "/account/login".equalsIgnoreCase(path) && "Post".equalsIgnoreCase(method);
-		res = res || ("Put".equalsIgnoreCase(method) && path.matches("/account/user/\\w+/?"));
+	}
+	
+	private boolean checkPathAndMethod(String path) {
+		boolean res = path.matches("/account/user/\\w+/role/[A-Za-z]+/?");
 		return res;
 	}
 

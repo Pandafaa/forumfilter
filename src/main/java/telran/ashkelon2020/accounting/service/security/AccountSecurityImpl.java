@@ -61,7 +61,7 @@ public class AccountSecurityImpl implements AccountSecurity {
 	public boolean checkHaveRole(String login, String role) {
 		UserAccount userAccount = repository.findById(login)
 				.orElseThrow(() -> new UserNotFoundException(login));
-		return userAccount.getRoles().contains(role);
+		return userAccount.getRoles().contains(role.toUpperCase());
 	}
 	
 	@Override

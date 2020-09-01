@@ -59,7 +59,7 @@ public class UserAccountController {
 		return accountService.changeRolesList(login, role, false);
 	}
 
-	@PutMapping("/user/password")
+	@PutMapping("/password")
 	public void changePassword(@RequestHeader("X-Password") String newPassword, Principal principal) {
 		accountService.changePassword(principal.getName(), newPassword);
 	}
