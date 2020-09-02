@@ -54,10 +54,15 @@ public class ExpDateFilter implements Filter {
 	private boolean checkPathAndMethod(String path, String method) {
 		boolean res = "/account/login".equalsIgnoreCase(path) && "Post".equalsIgnoreCase(method);
 
-		res = res || ("Put".equalsIgnoreCase(method) && path.matches("/account/user/\\w+/?"))
-				||path.matches("/forum/post/\\w+/?")&&!"Get".equalsIgnoreCase(method)
-				||(path.matches("/forum/post/\\w+/like")||path.matches("/forum/post/\\w+/comment/\\w+/?"))&&"Put".equalsIgnoreCase(method);
-		return res;
+	       res = res || ("Put".equalsIgnoreCase(method) && path.matches("/account/user/\\w+/?"));
+	        res = res || ("post".equalsIgnoreCase(method) && path.matches("/forum/post/[^/]+/?")); // add post?
+	        res = res || ("delete".equalsIgnoreCase(method) && path.matches("/forum/post/[^/]+/?")); // delete post
+	        res = res || ("put".equalsIgnoreCase(method) && path.matches("/forum/post/[^/]+/?")); // edit post
+	        res = res || ("put".equalsIgnoreCase(method) && path.matches("/forum/post/[^/]+/?/like/?")); // like post
+	        res = res || ("put".equalsIgnoreCase(method) && path.matches("/forum/post/[^/]+/comment/[^/]+/?")); // add comment
+	        return res;
+	    }
+
 	}
 
-}
+

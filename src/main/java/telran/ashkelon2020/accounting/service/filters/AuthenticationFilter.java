@@ -34,7 +34,8 @@ public class AuthenticationFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) resp;
 		String path = request.getServletPath();
 		String token = request.getHeader("Authorization");
-		if (!"/account/register".equalsIgnoreCase(path)) {
+		 String method = request.getMethod();
+		if (checkPathAndMethod(path, method)){
 			String sessionId = request.getSession().getId();
 			if (sessionId != null && token == null) {
 				String login = securityService.getUser(sessionId);
@@ -62,6 +63,17 @@ public class AuthenticationFilter implements Filter {
 
 		chain.doFilter(request, response);
 	}
+	 private boolean checkPathAndMethod(String path, String method) {
+	        boolean res = path.startsWith("/account") && !"/account/register".equalsIgnoreCase(path);
+	        res = res || ("post".equalsIgnoreCase(method) && path.matches("/forum/post/[^/]+/?")); // add post?
+	        res = res || ("delete".equalsIgnoreCase(method) && path.matches("/forum/post/[^/]+/?")); // delete post
+	        res = res || ("put".equalsIgnoreCase(method) && path.matches("/forum/post/[^/]+/?")); // edit post
+	        res = res || ("put".equalsIgnoreCase(method) && path.matches("/forum/post/[^/]+/?/like/?")); // like post
+	        res = res || ("put".equalsIgnoreCase(method) && path.matches("/forum/post/[^/]+/comment/[^/]+/?")); // add comment
+	        return res;
+	    }
+
+
 
 	private class WrapperRequest extends HttpServletRequestWrapper {
 		String user;
