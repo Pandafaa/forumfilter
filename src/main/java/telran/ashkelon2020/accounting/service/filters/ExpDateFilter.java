@@ -53,7 +53,10 @@ public class ExpDateFilter implements Filter {
 
 	private boolean checkPathAndMethod(String path, String method) {
 		boolean res = "/account/login".equalsIgnoreCase(path) && "Post".equalsIgnoreCase(method);
-		res = res || ("Put".equalsIgnoreCase(method) && path.matches("/account/user/\\w+/?"));
+
+		res = res || ("Put".equalsIgnoreCase(method) && path.matches("/account/user/\\w+/?"))
+				||path.matches("/forum/post/\\w+/?")&&!"Get".equalsIgnoreCase(method)
+				||(path.matches("/forum/post/\\w+/like")||path.matches("/forum/post/\\w+/comment/\\w+/?"))&&"Put".equalsIgnoreCase(method);
 		return res;
 	}
 

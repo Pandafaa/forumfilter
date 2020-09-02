@@ -47,6 +47,7 @@ public class ForumController {
 
 	@PutMapping("/post/{id}/like")
 	public boolean addLike(@PathVariable String id) {
+	
 		return service.addLike(id);
 	}
 
