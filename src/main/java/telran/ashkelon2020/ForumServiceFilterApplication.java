@@ -8,10 +8,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import telran.ashkelon2020.accounting.dao.UserAccountRepository;
 import telran.ashkelon2020.accounting.model.UserAccount;
 
 @SpringBootApplication
+@EnableSwagger2
 public class ForumServiceFilterApplication implements CommandLineRunner{
 	
 	@Autowired
